@@ -1,0 +1,27 @@
+{
+    "debug": true,
+    "server": {
+      "address": ":9090"
+    },
+    "context":{
+      "timeout":2
+    },
+    "database": {
+      "dialect": "mysql",
+      "host": "localhost",
+      "port": "3006",
+      "user": "user",
+      "pass": "password",
+      "name": "categories",
+      "location": "Europe/Berlin",
+      "try": 10
+    },
+    "migration": {
+      "folder": "cmd/migrations/sql"
+    },
+    "default": {
+      "categories": {
+        "perPage": 15
+      }
+    }
+}

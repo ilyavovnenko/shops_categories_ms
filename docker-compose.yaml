@@ -1,0 +1,19 @@
+version: "2.3"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: shops_categories_ms_mysql
+    command: mysqld --user=root
+    volumes:
+      - ./db/shops_categories_ms_db/:/var/lib/mysql
+    ports:
+      - 3006:3306
+    environment:
+      - MYSQL_DATABASE=categories
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=root
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
