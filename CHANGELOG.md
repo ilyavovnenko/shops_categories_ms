@@ -1,5 +1,8 @@
 ## Changelog
-**0.0.1**
+**1.1.0**
+- Improved categories DB storage adding categories_parent_categories table Which gives the possibility to store the same categories for many different parent categories
+
+**1.0.0**
 - Created Migration script and sql files
 - Added config.example.json file which can be used like a template
 - Created Makefile
