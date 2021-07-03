@@ -8,12 +8,13 @@ CREATE TABLE attribute_values (
     created_at    timestamp default NOW() not null,
     updated_at    timestamp default NOW() not null,
 
-    FOREIGN KEY (attribute_id) REFERENCES attributes(id)
+    FOREIGN KEY (attribute_id) REFERENCES attributes(id),
+
+    UNIQUE KEY (attribute_id,tech_name)
 )
     collate = utf8mb4_unicode_ci;
 
 create index idxName on attribute_values (name);
-create index idxTechName on attribute_values (tech_name);
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back

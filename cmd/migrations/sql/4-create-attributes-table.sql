@@ -16,14 +16,15 @@ CREATE TABLE attributes (
     created_at    timestamp default NOW()                                 not null,
     updated_at    timestamp default NOW()                                 not null,
 
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    FOREIGN KEY (category_id) REFERENCES categories(id),
+
+    UNIQUE KEY (category_id,tech_name)
 )
     collate = utf8mb4_unicode_ci;
 
 -- todo: add foreifn key for shop_id
 
 create index idxName on attributes (name);
-create index idxTechName on attributes (tech_name);
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back

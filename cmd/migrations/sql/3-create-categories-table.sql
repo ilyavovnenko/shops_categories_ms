@@ -9,14 +9,15 @@ CREATE TABLE categories (
     created_at       timestamp default NOW() not null,
     updated_at       timestamp default NOW() not null,
 
-    FOREIGN KEY (shop_id) REFERENCES shops(id)
+    FOREIGN KEY (shop_id) REFERENCES shops(id),
+
+    UNIQUE KEY (shop_id, shop_external_id)
 )
     collate = utf8mb4_unicode_ci;
 
 -- todo: add foreifn key for shop_id
 
 create index idxName on categories (name);
-create index idxShopExternalId on categories (shop_external_id);
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
