@@ -14,6 +14,7 @@ type Config struct {
 	Migration Migration
 	Server    Server
 	Default   Default
+	Parsers   Parsers
 }
 
 type Context struct {
@@ -47,6 +48,19 @@ type Categories struct {
 	PerPage uint16
 }
 
+type Parsers struct {
+	Amazon Amazon
+	Bol    Bol
+}
+
+type Amazon struct {
+	DataModelUrl string
+}
+
+type Bol struct {
+	DataModelUrl string
+}
+
 func GetConfig(configPath string) Config {
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()
@@ -66,6 +80,7 @@ func GetConfig(configPath string) Config {
 		getMigration(),
 		getServer(),
 		getDefault(),
+		getParsers(),
 	}
 }
 
@@ -113,6 +128,25 @@ func getServer() Server {
 func getDefault() Default {
 	return Default{
 		getCategories(),
+	}
+}
+
+func getParsers() Parsers {
+	return Parsers{
+		getAmazon(),
+		getBol(),
+	}
+}
+
+func getAmazon() Amazon {
+	return Amazon{
+		viper.GetString("parsers.amazon.datamodel_url"),
+	}
+}
+
+func getBol() Bol {
+	return Bol{
+		viper.GetString("parsers.bol.datamodel_url"),
 	}
 }
 

@@ -2,6 +2,8 @@
 **1.1.0**
 - Improved categories DB storage adding categories_parent_categories table Which gives the possibility to store the same categories for many different parent categories
 - Added unique key constraints to the categories, attributes, attributes_values tables
+- Created storing categories logick
+- Created Bol parser
 
 **1.0.0**
 - Created Migration script and sql files

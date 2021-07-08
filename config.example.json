@@ -23,5 +23,13 @@
       "categories": {
         "perPage": 15
       }
+    },
+    "parsers": {
+      "amazon": {
+        "datamodel_url": ""
+      },
+      "bol": {
+        "datamodel_url": "https://productdatamodel.s-bol.com/datamodel_v1_nl.json"
+      }
     }
 }

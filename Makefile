@@ -29,4 +29,10 @@ migrate:
 rollback:
 	go run cmd/migrations/migrate.go down
 
-.PHONY: api test unittest build start restart stop down migrate rollback
+parsing_bol_com:
+	go run cmd/parsing/parse.go bol.com
+	
+parsing_amazon_de:
+	go run cmd/parsing/parse.go amazon.de
+
+.PHONY: api test unittest build start restart stop down migrate rollback parsing_bol
