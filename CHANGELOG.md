@@ -1,5 +1,8 @@
 ## Changelog
 **1.1.0**
+- cleaned main.go and prepeared for future modification
+
+**1.1.0**
 - Improved categories DB storage adding categories_parent_categories table Which gives the possibility to store the same categories for many different parent categories
 - Added unique key constraints to the categories, attributes, attributes_values tables
 - Created storing categories logick
