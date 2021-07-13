@@ -1,4 +1,9 @@
 ## Changelog
+**1.2.0**
+- Added cobra comands to main file
+- Adjusted migrations to the cobra commands
+- Adjusted parsing script to the cobra commands
+
 **1.1.1**
 - cleaned main.go and prepeared for future modification
 

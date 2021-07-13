@@ -1,21 +1,20 @@
-package main
+package migrations
 
 import (
-	"fmt"
-	"log"
-	"os"
+	"database/sql"
+	"strconv"
 
 	"github.com/ilyavovnenko/shops_categories_ms/configs"
-	"github.com/ilyavovnenko/shops_categories_ms/init/db"
 	"github.com/rubenv/sql-migrate"
+
+	log "github.com/sirupsen/logrus"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
-	conf := config.GetConfig("config.json")
+func Run(conf config.Config, dbConnection *sql.DB, log log.Logger, args []string) {
 	migrateCommand := migrate.Up
-	if os.Args[1] == "down" {
+	if args[0] == "down" {
 		migrateCommand = migrate.Down
 	}
 
@@ -23,18 +22,10 @@ func main() {
 		Dir: conf.Migration.Folder,
 	}
 
-	dbConnection, err := db.GetDbConnection(conf.Database)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// close connection in the end of function
-	defer db.CloseDbConnection(dbConnection)
-
 	n, err := migrate.Exec(dbConnection, conf.Database.Dialect, migrations, migrateCommand)
 	if err != nil {
-		fmt.Printf("Error while executing migration!\n%s\n", err)
+		log.Error(err)
 	}
 
-	fmt.Printf("Applied %d migrations!\n", n)
+	log.Info("Applied " + strconv.Itoa(n) + " migrations!")
 }

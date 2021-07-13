@@ -1,13 +1,11 @@
-package main
+package parsing
 
 import (
-	"log"
-	"os"
+	"database/sql"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/ilyavovnenko/shops_categories_ms/configs"
-	"github.com/ilyavovnenko/shops_categories_ms/init/db"
 	"github.com/ilyavovnenko/shops_categories_ms/internal/attribute"
 	"github.com/ilyavovnenko/shops_categories_ms/internal/category"
 	"github.com/ilyavovnenko/shops_categories_ms/internal/shop"
@@ -15,41 +13,29 @@ import (
 	bp "github.com/ilyavovnenko/shops_categories_ms/internal/parser/bol"
 )
 
-func main() {
-	conf := config.GetConfig("config.json")
+func Run(conf config.Config, dbConnection *sql.DB, log log.Logger, args []string) {
+	argument := args[0]
 
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
-	customFormatter.FullTimestamp = true
-	logrus.SetFormatter(customFormatter)
-
-	dbConnection, err := db.GetDbConnection(conf.Database)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// close db connection in the end of main function processing
-	defer db.CloseDbConnection(dbConnection)
-
+	// todo: probbably move to the main.go
 	// init repos
 	categoryRepo := category.New(dbConnection)
 	attributeRepo := attribute.New(dbConnection)
 	shopRepo := shop.New(dbConnection)
 
-	shopId, err := shopRepo.GetIdByName(os.Args[1])
+	shopId, err := shopRepo.GetIdByName(argument)
 	if err != nil {
-		logrus.Error("Shop with this name is not exists!")
+		log.Error("Shop with this name is not exists!")
 		return
 	}
 
-	switch os.Args[1] {
+	switch argument {
 	case shop.AmazonDE, shop.AmazonNL, shop.AmazonCOM:
 		// todo: create logick for parsing amazon categories
 	case shop.BolCom:
-		bolParser := bp.New(shopId, *logrus.StandardLogger(), conf.Parsers.Bol.DataModelUrl, categoryRepo, attributeRepo)
+		bolParser := bp.New(shopId, log, conf.Parsers.Bol.DataModelUrl, categoryRepo, attributeRepo)
 		bolParser.ParseDatamodel()
 	case shop.EbayCOM, shop.EbayDE, shop.EbayNL:
 		// todo: create logick for parsing ebay categories
 	}
-	logrus.Info("DONE")
+	log.Info("DONE")
 }
