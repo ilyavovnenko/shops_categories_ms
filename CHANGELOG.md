@@ -1,5 +1,5 @@
 ## Changelog
-**1.1.0**
+**1.1.1**
 - cleaned main.go and prepeared for future modification
 
 **1.1.0**
