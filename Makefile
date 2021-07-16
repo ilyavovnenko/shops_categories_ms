@@ -1,5 +1,5 @@
 api:
-	go run cmd/main.go 
+	go run . api
 
 test: 
 	go test -v -cover -covermode=atomic ./...
@@ -24,15 +24,15 @@ down:
 	docker-compose down
 
 migrate:
-	go run cmd/migrations/migrate.go up
+	go run . migrate up
 
 rollback:
-	go run cmd/migrations/migrate.go down
+	go run . migrate down
 
 parsing_bol_com:
-	go run cmd/parsing/parse.go bol.com
+	go run . parse bol.com
 	
 parsing_amazon_de:
-	go run cmd/parsing/parse.go amazon.de
+	go run . parse amazon.de
 
-.PHONY: api test unittest build start restart stop down migrate rollback parsing_bol
+.PHONY: api test unittest build start restart stop down migrate rollback parsing_bol api

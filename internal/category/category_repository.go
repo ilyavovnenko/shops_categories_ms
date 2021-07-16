@@ -2,8 +2,6 @@ package category
 
 import (
 	"database/sql"
-	// "errors"
-	// "github.com/sirupsen/logrus"
 )
 
 type CategoryRepo struct {

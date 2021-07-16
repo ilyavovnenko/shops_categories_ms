@@ -1,4 +1,9 @@
 ## Changelog
+**1.2.1**
+- Moved repository initialising part to the main file
+- Created repository collection
+- adjusted Makefile
+
 **1.2.0**
 - Added cobra comands to main file
 - Adjusted migrations to the cobra commands
