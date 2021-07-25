@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"database/sql"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/ilyavovnenko/shops_categories_ms/internal/attribute"
 	"github.com/ilyavovnenko/shops_categories_ms/internal/category"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,14 +26,14 @@ type Attributes struct {
 }
 
 type Attribute struct {
-	ID                  string `json:"id"`
-	Name                string `json:"name"`
-	Definition          string `json:"definition"`
-	FillingInstructions string `json:"fillingInstructions"`
-	MultiValue          bool   `json:"multiValue"`
-	Validation          string `json:"Validation"`
-	LovId               string `json:"lovId"`
-	EnrichmentLevel     int8   `json:"enrichmentLevel"`
+	ID                  string         `json:"id"`
+	Name                string         `json:"name"`
+	Definition          string         `json:"definition"`
+	FillingInstructions string         `json:"fillingInstructions"`
+	MultiValue          bool           `json:"multiValue"`
+	Validation          sql.NullString `json:"Validation"`
+	LovId               string         `json:"lovId"`
+	EnrichmentLevel     int8           `json:"enrichmentLevel"`
 }
 
 type Chunks struct {
@@ -164,10 +166,7 @@ func prepareCurrentAttribute(category category.Category, chunkAttr Attribute, at
 	currentAttribute.Name = attributeInfo.Name
 	currentAttribute.Type = "string"
 	currentAttribute.UpdatedAt = time.Now()
-
-	if attributeInfo.Validation != "" {
-		currentAttribute.Validation = attributeInfo.Validation
-	}
+	currentAttribute.Validation = attributeInfo.Validation
 
 	if attributeInfo.MultiValue {
 		currentAttribute.Multivalue = 1
@@ -176,7 +175,7 @@ func prepareCurrentAttribute(category category.Category, chunkAttr Attribute, at
 	if chunkAttr.EnrichmentLevel == 0 || chunkAttr.EnrichmentLevel == 1 {
 		currentAttribute.Mandatory = 1
 	} else {
-		currentAttribute.Priority = 1 // todo: clerify it
+		currentAttribute.Priority = sql.NullInt64{Int64: 1, Valid: true}
 	}
 
 	return currentAttribute

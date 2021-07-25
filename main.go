@@ -9,8 +9,8 @@ import (
 	"github.com/ilyavovnenko/shops_categories_ms/cmd/migrations"
 	"github.com/ilyavovnenko/shops_categories_ms/cmd/parsing"
 	"github.com/ilyavovnenko/shops_categories_ms/init/db"
-	"github.com/ilyavovnenko/shops_categories_ms/internal/attribute"
-	"github.com/ilyavovnenko/shops_categories_ms/internal/category"
+	attributeRepo "github.com/ilyavovnenko/shops_categories_ms/internal/attribute/repository/mysql"
+	categoryRepo "github.com/ilyavovnenko/shops_categories_ms/internal/category/repository/mysql"
 	"github.com/ilyavovnenko/shops_categories_ms/internal/shop"
 	"github.com/sirupsen/logrus"
 
@@ -22,13 +22,14 @@ import (
 )
 
 func main() {
-	conf := config.GetConfig("config.json")
-
 	// logger
 	customFormatter := new(logrus.TextFormatter)
 	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
 	customFormatter.FullTimestamp = true
 	logrus.SetFormatter(customFormatter)
+
+	// config
+	conf := config.GetConfig("config.json", *logrus.StandardLogger())
 
 	// db connection
 	dbConnection, err := db.GetDbConnection(conf.Database)
@@ -41,15 +42,15 @@ func main() {
 
 	// initialising Repositories
 	repoCollection := repository.RepoCollection{
-		CategoryRepo:  category.New(dbConnection),
-		AttributeRepo: attribute.New(dbConnection),
+		CategoryRepo:  categoryRepo.New(dbConnection, &logrus.Logger{}),
+		AttributeRepo: attributeRepo.New(dbConnection, &logrus.Logger{}),
 		ShopRepo:      shop.New(dbConnection),
 	}
 
 	// cobra part
 	var rootCmd = &cobra.Command{Use: "app"}
 	rootCmd.AddCommand( // add here commands, comma separated
-		getApiCmd(conf, dbConnection),
+		getApiCmd(conf, dbConnection, repoCollection),
 		getMigrateCmd(conf, dbConnection),
 		getParseCmd(conf, dbConnection, repoCollection),
 	)
@@ -84,13 +85,13 @@ func getParseCmd(conf config.Config, dbConnection *sql.DB, repoCollection reposi
 	}
 }
 
-func getApiCmd(conf config.Config, dbConnection *sql.DB) *cobra.Command {
+func getApiCmd(conf config.Config, dbConnection *sql.DB, repoCollection repository.RepoCollection) *cobra.Command {
 	return &cobra.Command{
 		Use:   "api",
 		Short: "Start api serving",
 		Long:  `Api will be served until this proces will be not killed`,
 		Run: func(cmd *cobra.Command, args []string) {
-			api.Run(conf, dbConnection, *logrus.StandardLogger())
+			api.Run(conf, dbConnection, *logrus.StandardLogger(), repoCollection)
 		},
 	}
 }

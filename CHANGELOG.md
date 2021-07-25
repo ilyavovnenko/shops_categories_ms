@@ -1,4 +1,9 @@
 ## Changelog
+**2.0.0**
+- REST API integration
+- Response meta block has next and previous links
+- Added possibility to get all and get categories by id and the same for attributes
+
 **1.2.1**
 - Moved repository initialising part to the main file
 - Created repository collection

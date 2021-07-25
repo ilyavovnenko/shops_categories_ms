@@ -1,6 +1,9 @@
 package category
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Category struct {
 	ID             uint64    `json:"id"`
@@ -13,6 +16,8 @@ type Category struct {
 }
 
 type CategoryRepository interface {
+	GetAll(ctx context.Context, perPage uint16, page int) ([]Category, error)
+	GetByID(ctx context.Context, id int64) (Category, error)
 	DeactivateShopCategories(ShopID uint)
 	StoreCategory(cat Category) (Category, error)
 	StoreParentCategoryConnection(catId uint64, parentCatId uint64) error

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -41,7 +42,7 @@ type Server struct {
 }
 
 type Default struct {
-	Categories Categories
+	PerPage uint16
 }
 
 type Categories struct {
@@ -61,7 +62,7 @@ type Bol struct {
 	DataModelUrl string
 }
 
-func GetConfig(configPath string) Config {
+func GetConfig(configPath string, log logrus.Logger) Config {
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -75,19 +76,19 @@ func GetConfig(configPath string) Config {
 
 	return Config{
 		debugVal,
-		getContext(),
-		getDatabase(),
+		getContext(log),
+		getDatabase(log),
 		getMigration(),
 		getServer(),
-		getDefault(),
+		getDefault(log),
 		getParsers(),
 	}
 }
 
-func getDatabase() Database {
+func getDatabase(log logrus.Logger) Database {
 	tryCount, err := strconv.Atoi(viper.GetString("database.try"))
 	if err != nil {
-		fmt.Println("Error! Try count attribute has a problem:", err)
+		log.Error(err)
 	}
 
 	return Database{
@@ -108,10 +109,10 @@ func getMigration() Migration {
 	}
 }
 
-func getContext() Context {
+func getContext(log logrus.Logger) Context {
 	integer, err := strconv.Atoi(viper.GetString("context.timeout"))
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	return Context{
@@ -125,9 +126,20 @@ func getServer() Server {
 	}
 }
 
-func getDefault() Default {
+func getDefault(log logrus.Logger) Default {
+	var perPage uint16
+	tPerPage, err := strconv.Atoi(viper.GetString("default.perPage"))
+	if err != nil {
+		perPage = 15
+
+		log.Error(err)
+		log.Info("Default value for default.perPage set to ", perPage)
+	} else {
+		perPage = uint16(tPerPage)
+	}
+
 	return Default{
-		getCategories(),
+		perPage,
 	}
 }
 
@@ -147,22 +159,5 @@ func getAmazon() Amazon {
 func getBol() Bol {
 	return Bol{
 		viper.GetString("parsers.bol.datamodel_url"),
-	}
-}
-
-func getCategories() Categories {
-	var perPage uint16
-	tPerPage, err := strconv.Atoi(viper.GetString("default.categories.perPage"))
-	if err != nil {
-		perPage = 15
-
-		fmt.Println(err)
-		fmt.Printf("Default value for default.categories.perPage set to %d\n", perPage)
-	} else {
-		perPage = uint16(tPerPage)
-	}
-
-	return Categories{
-		perPage,
 	}
 }
